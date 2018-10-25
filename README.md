@@ -1,1 +1,2 @@
 # NMF
+一种改进的NMF机制，根据论文[An Improved Algorithm for Privacy-preserving Data Mining Based on NMF](http://manu35.magtech.com.cn/Jwk_ics/CN/article/downloadArticleFile.do?attachType=PDF&id=3758)完成的，论文链接来自于互联网， 如有侵权，请联系我删除。
