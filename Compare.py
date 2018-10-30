@@ -52,18 +52,30 @@ def getFilepath(FilePath):
     parents = os.listdir(FilePath)
     files = []
     #获取data文件夹下除了data.txt的其他文件的路径(加噪后的数据文件)
+
     for parent in parents:
         if "50" in parent:
+            files.append(parent)
+        if "30" in  parent:
             files.append(parent)
     files.append("nmf_data.txt")
     return files
 
+def compare(a,b):
+    a = np.array(a)
+    b = np.array(b)
+    VD = cVD(a, b)
+    RP, RK = cRP(a, b)
+    CP, CK = cCP(a, b)
+    print(" VD=", VD, ", RP=", RP, ", RK=", RK, ", CP=", CP, ", CK=", CK)
+
 
 if __name__ == '__main__':
-    FilePath = [None] * 3
+    FilePath = [None] * 4
     FilePath[0] = os.path.abspath('.') + "\Haberman Data\\"  # data.txt是原数据
     FilePath[1] = os.path.abspath('.') + "\Iris Data\\"  # data.txt是原数据
     FilePath[2] = os.path.abspath('.') + "\Ionosphere Data\\"  # data.txt是原数据
+    FilePath[3] = os.path.abspath('.') + "\\final_data\\"  # data.txt是原数据
     for Path in FilePath:
         print(Path)
         datas = getFilepath(Path)  # 获取data文件夹下所有文件，即加噪后的数据

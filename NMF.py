@@ -10,10 +10,10 @@ def get_min_per(matrix,percent):
     per=int(len(l)*percent)
     return l[per]
 
-def NMF(matrix,percent):
+def nmf(matrix,percent):
     m,n = np.shape(matrix)
     per=get_min_per(matrix,percent)
-    for i in range(m):
+    for i in range(1,m):
         for j in range(n):
             if matrix[i][j]<=per:
                 matrix[i][j]=0
@@ -21,7 +21,7 @@ def NMF(matrix,percent):
 
 def Deal_data(infile,outfile,percent,type):
     a = np.loadtxt(infile ,dtype=type, delimiter=',')  # 以float加载txt为矩阵形式
-    b=NMF(a,percent)
+    b=nmf(a,percent)
     file=open(outfile,'w')
     out_str=''
     for line in b:
@@ -32,15 +32,14 @@ def Deal_data(infile,outfile,percent,type):
     file.write(out_str)
 
 
-FilePath=[None]*3
+FilePath=[None]*4
 FilePath[0] = os.path.abspath('.') + "\Haberman Data\\"  # data.txt是原数据
 FilePath[1] = os.path.abspath('.') + "\Iris Data\\"  # data.txt是原数据
 FilePath[2] = os.path.abspath('.') + "\Ionosphere Data\\"  # data.txt是原数据
-
+FilePath[3] = os.path.abspath('.') + "\\WBC\\"  # data.txt是原数据
 Deal_data(FilePath[0]+'data.txt',FilePath[0]+'nmf_data.txt',0.1,int)
-Deal_data(FilePath[1]+'data.txt',FilePath[1]+'nmf_data.txt',0.1,float)
-Deal_data(FilePath[2]+'data.txt',FilePath[2]+'nmf_data.txt',0.1,float)
-
-
+Deal_data(FilePath[1]+'data.txt',FilePath[1]+'nmf_data.txt',0.1,int)
+Deal_data(FilePath[2]+'data.txt',FilePath[2]+'nmf_data.txt',0.1,int)
+Deal_data(FilePath[3]+'data.txt',FilePath[3]+'nmf_data.txt',0.1,int)
 
 
