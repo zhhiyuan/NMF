@@ -61,33 +61,55 @@ def getFilepath(FilePath):
     files.append("nmf_data.txt")
     return files
 
+def del_label(a_with_label):
+    a = []
+    for j in a_with_label:
+        a.append(j[1:])
+    return a
+
 def compare(a,b):
     a = np.array(a)
     b = np.array(b)
+    #print(a)
+    #print(b)
+    #a = del_label(a_with_label)
+    #b = del_label(b_with_label)
+    five = []
     VD = cVD(a, b)
     RP, RK = cRP(a, b)
     CP, CK = cCP(a, b)
-    print(" VD=", VD, ", RP=", RP, ", RK=", RK, ", CP=", CP, ", CK=", CK)
+    five.append(VD)
+    five.append(RP)
+    five.append(RK)
+    five.append(CP)
+    five.append(CK)
+    #print(" VD=", VD, ", RP=", RP, ", RK=", RK, ", CP=", CP, ", CK=", CK)
+    return five
 
 
 if __name__ == '__main__':
-    FilePath = [None] * 4
-    FilePath[0] = os.path.abspath('.') + "\Haberman Data\\"  # data.txt是原数据
+    FilePath = [None] * 3
+    FilePath[0] = os.path.abspath('.') + "\WBC\\"  # data.txt是原数据
     FilePath[1] = os.path.abspath('.') + "\Iris Data\\"  # data.txt是原数据
     FilePath[2] = os.path.abspath('.') + "\Ionosphere Data\\"  # data.txt是原数据
-    FilePath[3] = os.path.abspath('.') + "\\final_data\\"  # data.txt是原数据
+
     for Path in FilePath:
         print(Path)
         datas = getFilepath(Path)  # 获取data文件夹下所有文件，即加噪后的数据
-        a = np.loadtxt(Path + "data.txt", dtype=float, delimiter=',')  # 以float加载txt为矩阵形式
+        a1 = np.loadtxt(Path + "data.txt", dtype=float, delimiter=',')  # 以float加载txt为矩阵形式
         for i in range(len(datas)):
-            b = np.loadtxt(Path + datas[i], dtype=float, delimiter=',')
+            b1 = np.loadtxt(Path + datas[i], dtype=float, delimiter=',')
+            a = del_label(a1)
+            a = np.array(a)
+            b = del_label(b1)
+            b = np.array(b)
             # 分别计算五个参数
             VD = cVD(a, b)
             RP, RK = cRP(a, b)
             CP, CK = cCP(a, b)
             print("data.txt ", datas[i], " VD=", VD, ", RP=", RP, ", RK=", RK, ", CP=", CP, ", CK=", CK)
         print()
+
 '''
 #多个文件
 datas = getFilepath()   #获取data文件夹下所有文件，即加噪后的数据

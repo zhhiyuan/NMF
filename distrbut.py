@@ -6,7 +6,8 @@ from time import time
 import numpy as np
 import os
 import random
-
+import math
+from numpy import nan as NaN
 # var
 index = 624
 MT = [0] * index
@@ -66,7 +67,7 @@ def boxmuller():
 def Random_list(num,n):
     random_list = []
     while len(random_list) < num:   #随机数个数
-        y = random.uniform(1,n-1)  # 0,n之间抽样随机数
+        y = random.uniform(0,n-1)  # 0,n之间抽样随机数
         if round(y) not in random_list:
             random_list.append(round(y))
     return random_list    #返回随机数组
@@ -162,13 +163,23 @@ def add_main(num,n,range,outfilename):
 
         str_data = ''
 
-def Dis(data,num,n,rate):
-    data=np.matrix.tolist(data)
-    for j in range(len(data)):
-        list_data = Random_list(num,n-1)   #随机数组
+def Dis(old_data,num,n):
+    '''
+
+    :param old_data: 列表
+    :param num: 干扰数目
+    :param n: 属性个数
+    :return:
+    '''
+    abs_data=np.abs(old_data)
+    data=np.matrix.tolist(old_data)
+    for j in range(len(data)):  #对于每一行
+        list_data = Random_list(num,n)   #随机数组
         for i in list_data:    #对随机位置的数干扰处理
             idata = float(data[j][i])    #取出该位置的数
             #根据给定比列确定随机数生成区间，[min_data,max_data]
+            sum=(2*np.mean(abs_data[:,i]) )
+            rate =math.sqrt( (len(old_data)*abs_data[j][i]) / sum  ) #求随机列i的平均值
             min_idata = idata * (1-rate)
             max_idata = idata * (1+rate)
             if min_idata>max_idata:
@@ -178,7 +189,9 @@ def Dis(data,num,n,rate):
             #在min_data，max_data之间取一个随机数替代之前的数
             new_idata = min_idata + float((max_idata - min_idata) * so)
             data[j][i] = round(new_idata,3)   #保留三位小数
-    return np.mat(data)
+            if math.isnan(data[j][i]):
+                data[j][i]=0
+    return data
 
 
 def main(num,range,outfilename,TYPE):
@@ -191,7 +204,13 @@ def main(num,range,outfilename,TYPE):
 if __name__ == '__main__':
     # 第一个参数是随机属性的个数，第二个参数是比率
     # 比率k：在n(1-k)和n(1+k)之间取一个随机数
+    data=[[1,2,3],[1,2,5],[100,2,1]]
+    print(data)
+    print(Dis(np.array(data),3,3))
+    '''
     n = 30
     for i in range(1,n):
         add_main(i,n,50,'add {},30.txt'.format(i))
         print('one done!')
+
+'''
