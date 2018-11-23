@@ -1,20 +1,21 @@
 import numpy as np
 import sklearn.model_selection as train
-from sklearn import tree
+from sklearn import svm
 from sklearn.metrics import accuracy_score
 import os
 import csv
 #处理旧数据
 from distrbut import Dis
+
 from  NMF import nmf
 from Compare import compare
 if __name__ == '__main__':
-    n = [34]
+    n = [30]
     FilePath = [None] * 1
     path = os.path.abspath('.') + "\\"
-    #FilePath[0] = "WBC"     #n=30
+    FilePath[0] = "WBC"     #n=30
     #FilePath[0] = "Iris Data"      #n=3
-    FilePath[0] = "Ionosphere Data"    #n=34
+    #FilePath[0] = "Ionosphere Data"    #n=34
     for i in range(1):
         print(FilePath[i])
         filename = open(path + FilePath[i] + '\\data.txt')
@@ -22,14 +23,12 @@ if __name__ == '__main__':
         x, y = np.split(data, indices_or_sections=(1,), axis=1)
         # 后十个为属性值，第一个为标签
 
-        if FilePath[i] == "Iris Data":
-            x, y = y[:, 1:], x
-        else:
-            x, y = y[:, :], x
+
+        x, y = y[:, :], x
         # 抽取0.6作为训练集
         x_train, x_test, y_train, y_test = train.train_test_split(x, y, random_state=1, train_size=0.4)
 
-        clf = tree.DecisionTreeClassifier(max_depth=20)
+        clf = svm.SVC(C=1.0, decision_function_shape='ovo', gamma='auto', kernel='rbf', probability=True)
         clf.fit(x_train, y_train.ravel())
         o_y_hat = clf.predict(x_test)
         # 原始数据测试集的准确率
@@ -41,8 +40,6 @@ if __name__ == '__main__':
                 write = []
                 rate = j / n[i]
 
-                if rate > 0.7:
-                    continue
                 print('e={}情况下的detail R：'.format(round(rate,2)))
                 write.append(round(rate,2)) ###
 

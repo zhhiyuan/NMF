@@ -178,8 +178,15 @@ def Dis(old_data,num,n):
         for i in list_data:    #对随机位置的数干扰处理
             idata = float(data[j][i])    #取出该位置的数
             #根据给定比列确定随机数生成区间，[min_data,max_data]
-            sum=(2*np.mean(abs_data[:,i]) )
-            rate =math.sqrt( (len(old_data)*abs_data[j][i]) / sum  ) #求随机列i的平均值
+
+
+            sum=2*(np.mean(abs_data[:,i]) )
+            rate = math.sqrt((len(old_data)*abs_data[j][i]) / sum)   #求随机列i的平均值
+
+            '''
+            sum =  2*(np.mean(abs_data[:, i]))
+            rate = (len(old_data) * abs_data[j][i]) / sum # 求随机列i的平均值
+            '''
             min_idata = idata * (1-rate)
             max_idata = idata * (1+rate)
             if min_idata>max_idata:
