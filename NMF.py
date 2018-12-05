@@ -1,5 +1,4 @@
 import numpy as np
-import os
 def get_min_per(matrix,percent):
     m,n = np.shape(matrix)
     l=[]
@@ -13,7 +12,7 @@ def get_min_per(matrix,percent):
 def nmf(matrix1,j , k):
     matrix = matrix1[:]
     m,n = np.shape(matrix)
-    rate = j/k
+    rate = j/(2*k)
     per=get_min_per(matrix,rate)
     print(rate)
     for i in range(1,m):

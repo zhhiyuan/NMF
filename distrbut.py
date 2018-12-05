@@ -26,7 +26,7 @@ def twister():
         MT[i] = MT[(i + 397) % 624] ^ y >> 1
         if y % 2 != 0:
             MT[i] = MT[i] ^ 0x9908b0df
-    index = 0
+    index= 0
 
 
 def exnum():
@@ -72,106 +72,16 @@ def Random_list(num,n):
             random_list.append(round(y))
     return random_list    #返回随机数组
 
-def our_main(num,rate,n,outfilename):
-    str_data = ''
-    rate=float(rate/100)
-    #定义输入输出文件
-    file = open(FilePath + '\\data.txt', 'r')
-    outfile = open(FilePath + '\\'+outfilename, 'w')
-    lines = file.readlines()
-    for line in lines:
-        line = line.split(',')
-        line[-1] = line[-1].replace('\n', '')
-        list_data = Random_list(num,n-1)   #随机数组
-        for i in list_data:    #对随机位置的数干扰处理
-            idata = float(line[i])    #取出该位置的数
-            #根据给定比列确定随机数生成区间，[min_data,max_data]
-            min_idata = idata * (1-rate)
-            max_idata = idata * (1+rate)
-
-            so = mainset(int(time())) / (2 ** 32 - 1)
-            #O线性同余法计算随机数
-            #在min_data，max_data之间取一个随机数替代之前的数
-            new_idata = min_idata + float((max_idata - min_idata) * so)
-            line[i] = round(new_idata,3)   #保留三位小数
-
-
-
-        #将数据存入文件
-        for every in line:
-            str_data = str_data + str(every) + ','
-        str_data = str_data[:-1]
-        str_data = str_data + '\n'
-        outfile.write(str_data)
-
-        str_data = ''
-
-def mul_main(num,rate,outfilename):
-    str_data = ''
-    rate = float(rate / 100)
-
-    # 定义输入输出文件
-    file = open(FilePath + '\\data.txt', 'r')
-    outfile = open(FilePath + '\\' + outfilename, 'w')
-    lines = file.readlines()
-    for line in lines:
-        line = line.split(',')
-        line[-1] = line[-1].replace('\n', '')
-        list_data = Random_list(num,n)  # 随机数组
-        for i in list_data:  # 对随机位置的数干扰处理
-            idata = float(line[i])  # 取出该位置的数
-            line[i] = idata*(1+rate)
-
-        # 将数据存入文件
-        for every in line:
-            str_data = str_data + str(every) + ','
-        str_data = str_data[:-1]
-        str_data = str_data + '\n'
-        outfile.write(str_data)
-
-        str_data = ''
-
-def add_main(num,n,range,outfilename):
-    str_data = ''
-    # 定义输入输出文件
-    file = open(FilePath + '\\data.txt', 'r')
-    outfile = open(FilePath + '\\' + outfilename, 'w')
-    lines = file.readlines()
-    for line in lines:
-        line = line.split(',')
-        line[-1] = line[-1].replace('\n', '')
-        list_data = Random_list(num,n-1)  # 随机数组
-        for i in list_data:  # 对随机位置的数干扰处理
-            idata = float(line[i])  # 取出该位置的数
-            # 根据给定比列确定随机数生成区间，[min_data,max_data]
-            min_idata = idata - range
-            max_idata = idata + range
-
-            so = mainset(int(time())) / (2 ** 32 - 1)
-            # O线性同余法计算随机数
-            # 在min_data，max_data之间取一个随机数替代之前的数
-            new_idata = min_idata + float((max_idata - min_idata) * so)
-            line[i] = round(new_idata, 3)  # 保留三位小数
-
-
-        # 将数据存入文件
-        for every in line:
-            str_data = str_data + str(every) + ','
-        str_data = str_data[:-1]
-        str_data = str_data + '\n'
-        outfile.write(str_data)
-
-        str_data = ''
 
 def Dis(old_data,num,n):
     '''
-
-    :param old_data: 列表
+    我们的干扰方法
+    :param old_data: 数据列表
     :param num: 干扰数目
     :param n: 属性个数
     :return:
     '''
-    abs_data=np.abs(old_data)
+    abs_data=np.abs(old_data)   #用于干扰公式
     data=np.matrix.tolist(old_data)
     for j in range(len(data)):  #对于每一行
         list_data = Random_list(num,n)   #随机数组
@@ -179,8 +89,8 @@ def Dis(old_data,num,n):
             idata = float(data[j][i])    #取出该位置的数
             #根据给定比列确定随机数生成区间，[min_data,max_data]
 
-
-            sum=2*(np.mean(abs_data[:,i]) )
+            #带根号
+            sum=32*(np.mean(abs_data[:,i]) )
             rate = math.sqrt((len(old_data)*abs_data[j][i]) / sum)   #求随机列i的平均值
 
             '''
@@ -201,13 +111,58 @@ def Dis(old_data,num,n):
     return data
 
 
-def main(num,range,outfilename,TYPE):
-    if TYPE=='mul':
-        mul_main(num,range,outfilename)#此处range为百分比
-    elif TYPE=='our':
-        our_main(num,range,outfilename)#此处range为百分比
-    else:
-        add_main(num,n,range,outfilename)#此处range为范围
+def dis_add(old_data, num ,n):
+    '''
+    加性干扰
+    :param old_data: 数据列表
+    :param num: 干扰数目
+    :param n: 属性个数
+    :return:
+    '''
+    dis_range =   50    #加性的范围
+    data = np.matrix.tolist(old_data)
+    for j in range(len(data)):  # 对于每一行
+        list_data = Random_list(num, n)  # 随机数组
+        for i in list_data:  # 对随机位置的数干扰处理
+            idata = float(data[j][i])  # 取出该位置的数
+            # 根据给定比列确定随机数生成区间，[min_data,max_data
+            min_idata = idata + dis_range
+            max_idata = idata - dis_range
+            if min_idata > max_idata:
+                max_idata, min_idata = min_idata, max_idata
+            so = mainset(int(time())) / (2 ** 32 - 1)
+            # O线性同余法计算随机数
+            # 在min_data，max_data之间取一个随机数替代之前的数
+            new_idata = min_idata + float((max_idata - min_idata) * so)
+            data[j][i] = round(new_idata, 3)  # 保留三位小数
+            if math.isnan(data[j][i]):
+                data[j][i] = 0
+    return data
+
+
+def dis_mul(old_data, num ,n):
+    '''
+       加性干扰
+       :param old_data: 数据列表
+       :param num: 干扰数目
+       :param n: 属性个数
+       :return:
+       '''
+    dis_range = 0.8  # 乘性的范围
+
+    data = np.matrix.tolist(old_data)
+    for j in range(len(data)):  # 对于每一行
+        list_data = Random_list(num, n)  # 随机数组
+        for i in list_data:  # 对随机位置的数干扰处理
+            idata = float(data[j][i])  # 取出该位置的数
+            # 根据给定比列确定随机数生成区间，[min_data,max_data
+            new_idata = idata * (1+dis_range)
+            data[j][i] = round(new_idata, 3)  # 保留三位小数
+            if math.isnan(data[j][i]):
+                data[j][i] = 0
+    return data
+
+
 if __name__ == '__main__':
     # 第一个参数是随机属性的个数，第二个参数是比率
     # 比率k：在n(1-k)和n(1+k)之间取一个随机数
